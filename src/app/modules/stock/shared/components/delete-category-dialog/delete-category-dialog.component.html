@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Supression de la categorie</h2>
+<mat-dialog-content>
+  <p>Êtes vous sure de vouloir supprimer cette categorie?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="dialogRef.close()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="confirmDelete()">Supprimer</button>
+</mat-dialog-actions>

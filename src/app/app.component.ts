@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { FuseMockApiService } from '@fuse/lib/mock-api';
 
 @Component({
     selector: 'app-root',
