@@ -18,8 +18,8 @@ private baseUrl: string = environment.apiUrl;
     return this.http.post<Client>(this.url, client);
   }
 
-  updateClient( client: Client): Observable<Client> {
-    return this.http.put<Client>(`${this.url}`, client);
+  updateClient( client: Client,id:string): Observable<Client> {
+    return this.http.put<Client>(`${this.url}/${id}`, client);
   }
 
   getClientsByFilter(filterModel: Client | null = null): Observable<ClientsPaged> {
@@ -38,6 +38,10 @@ private baseUrl: string = environment.apiUrl;
     }
 
     return this.http.get<ClientsPaged>(this.url, { params });
+  }
+
+  getClientById(id: string): Observable<ClientsPaged> {
+    return this.http.get<ClientsPaged>(`${this.url}/${id}`);
   }
 
   deleteClient(clientId: number): Observable<void> {

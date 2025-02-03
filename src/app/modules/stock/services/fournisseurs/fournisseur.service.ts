@@ -19,8 +19,8 @@ export class FournisseurService {
     return this.http.post<Fournisseur>(this.url, client);
   }
 
-  updateFournisseur( fournisseur: Fournisseur): Observable<Fournisseur> {
-    return this.http.put<Fournisseur>(`${this.url}`, fournisseur);
+  updateFournisseur( fournisseur: Fournisseur,id:string): Observable<Fournisseur> {
+    return this.http.put<Fournisseur>(`${this.url}/${id}`, fournisseur);
   }
 
   getFournisseursByFilter(filterModel: Fournisseur | null = null): Observable<FournisseursPaged> {
@@ -41,6 +41,10 @@ export class FournisseurService {
     return this.http.get<FournisseursPaged>(this.url, { params });
   }
 
+    getFourisseurById(id: string): Observable<FournisseursPaged> {
+      return this.http.get<FournisseursPaged>(`${this.url}/${id}`);
+    }
+  
   deleteFournisseur(fournisseurId: number): Observable<void> {
     const deleteUrl = `${this.url}/${fournisseurId}`;
     return this.http.delete<void>(deleteUrl);

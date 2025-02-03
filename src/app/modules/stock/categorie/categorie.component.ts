@@ -56,7 +56,6 @@ export class CategorieComponent implements OnInit {
     this.getAllCategories();
   }
 
-  // Fetch all categories
   getAllCategories(): void {
     this.categories$ = this.categoryService.getAllCategories().pipe(
       map((pagedData: CategoriesPaged) => pagedData.data),
@@ -68,7 +67,6 @@ export class CategorieComponent implements OnInit {
     );
   }
 
-  // Add a new category
   addCategory(): void {
     if (this.categoryForm.invalid) {
       this.showSnackBar('Please enter a valid category name!', 'error');
@@ -80,8 +78,8 @@ export class CategorieComponent implements OnInit {
     this.categoryService.addCategory(newCategory).subscribe({
       next: () => {
         this.showSnackBar('Category added successfully!', 'success');
-        this.getAllCategories(); // Reload categories
-        this.categoryForm.reset(); // Reset the form
+        this.getAllCategories(); 
+        this.categoryForm.reset(); 
       },
       error: (err) => {
         console.error('Error adding category:', err);
@@ -90,31 +88,27 @@ export class CategorieComponent implements OnInit {
     });
   }
 
-  // Open the delete confirmation dialog
   openDeleteDialog(categoryId: number): void {
     const dialogRef = this.dialog.open(DeleteCategoryDialogComponent, {
       width: '300px',
       enterAnimationDuration: '500ms',
       exitAnimationDuration: '300ms',
-    });
-    console.log(3132);
-    
+    });  
+
     dialogRef.afterClosed().pipe(
-      filter(result => result), // Only proceed if the user confirms deletion
-      switchMap(() => this.categoryService.deleteCategory(categoryId)) // Call delete API
+      filter(result => result), 
+      switchMap(() => this.categoryService.deleteCategory(categoryId)) 
     ).subscribe({
       next: () => {
-        this.showSnackBar('Category deleted successfully!', 'success');
-        this.getAllCategories(); // Reload categories
+        this.showSnackBar('Categorie supprimé avec succes!', 'success');
+        this.getAllCategories(); 
       },
       error: (err) => {
-        console.error('Error deleting category:', err);
-        this.showSnackBar('Failed to delete category. Please try again.', 'error');
+        this.showSnackBar('Echec de suppression veillez ressayer.', 'error');
       },
     });
   }
 
-  // Display a snack bar for success or error messages
   private showSnackBar(message: string, type: 'success' | 'error'): void {
     const snackBarComponent = type === 'success' ? SnackbarSuccessComponent : SnackbarErrorComponent;
     this.snackBar.openFromComponent(snackBarComponent, {

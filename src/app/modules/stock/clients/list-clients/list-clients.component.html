@@ -5,7 +5,7 @@
           Liste des clients
         </mat-card-header>
   
-        <button mat-raised-button color="primary" class="whitespace-nowrap">
+        <button mat-raised-button color="primary" (click)="goToAddClient()" class="mt-5 whitespace-nowrap">
           <mat-icon>add</mat-icon>
           Ajouter un client
         </button>
@@ -31,7 +31,7 @@
       </div>
       <div>
         <mat-card-content>
-          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
+          <table mat-table [dataSource]="dataSource" class=" demo-table">
             <ng-container matColumnDef="position">
               <th mat-header-cell *matHeaderCellDef>No.</th>
               <td mat-cell *matCellDef="let element">{{element.id}}</td>
@@ -51,7 +51,18 @@
               <th mat-header-cell *matHeaderCellDef>Adresse</th>
               <td mat-cell *matCellDef="let element">{{element.adresse}}</td>
             </ng-container>
-  
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let element">
+                <button (click)="updateClientById(element.id)" mat-icon-button>
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button (click)="openDeleteDialog(element.id)" mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>
