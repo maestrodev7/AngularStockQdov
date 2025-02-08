@@ -74,7 +74,8 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            
+            {path: 'boutiques', loadChildren: () => import('app/modules//stock/boutiques/boutique.routes')},
+            {path: 'magazins', loadChildren: () => import('app/modules/stock/magazins/magazin.routes')},
             {path: 'categories', loadChildren: () => import('app/modules/stock/categorie/categories.routes')},
             {path: 'fournisseurs', loadChildren: () => import('app/modules//stock/fournisseurs/fournisseur.routes')},
             {path: 'clients', loadChildren: () => import('app/modules//stock/clients/clients.routes')},

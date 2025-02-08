@@ -1,0 +1,49 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <div fxLayout="row" class="title flex justify-between items-center">
+      <h2>Modifier un magasin</h2>
+      <button mat-button routerLink="/magazins">Retourner à la liste des magasins</button>
+    </div>
+    <div class="container">
+      <form class="input-form" [formGroup]="updateMagazinForm" (ngSubmit)="onSubmit()">
+        <div class="div-content-add-and-delet-forms">
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Nom</mat-label>
+              <input matInput placeholder="Ex. Nom du magasin" formControlName="nom">
+              <mat-error *ngIf="updateMagazinForm.get('nom')?.hasError('required')">Le nom est <strong>requis</strong>.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Téléphone</mat-label>
+              <input matInput placeholder="Ex. +33696656256" formControlName="telephone">
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>Adresse</mat-label>
+              <input matInput placeholder="Ex. Nolanga" formControlName="adresse">
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>Entreprise</mat-label>
+              <mat-select formControlName="entreprise_id">
+                <mat-option *ngFor="let entreprise of entreprises" [value]="entreprise.id">
+                  {{ entreprise.nom }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="updateMagazinForm.get('entreprise_id')?.hasError('required')">L'entreprise est <strong>requise</strong>.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+  
+        <div class="button-container">
+          <button mat-raised-button [disabled]="updateMagazinForm.invalid" type="submit" color="primary">
+            Modifier
+          </button>
+          <button mat-raised-button type="reset" color="yellow">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

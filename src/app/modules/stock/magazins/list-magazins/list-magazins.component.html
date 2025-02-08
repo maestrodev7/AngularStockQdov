@@ -1,0 +1,84 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <mat-card appearance="outlined">
+      <div class="flex justify-between items-center">
+        <mat-card-header>
+          Liste des magasins
+        </mat-card-header>
+  
+        <button mat-raised-button color="primary" (click)="goToAddMagazin()" class="mt-5 whitespace-nowrap">
+          <mat-icon>add</mat-icon>
+          Ajouter un magasin
+        </button>
+      </div>
+      <div>
+        <h5>Filtrer par ...</h5>
+        <form [formGroup]="filterForm" class="input-container">
+          <mat-form-field>
+            <mat-label>Nom</mat-label>
+            <input matInput formControlName="nom" placeholder="Nom" (input)="applyFilter()">
+          </mat-form-field>
+  
+          <mat-form-field>
+            <mat-label>Telephone</mat-label>
+            <input matInput formControlName="telephone" placeholder="Telephone" (input)="applyFilter()">
+          </mat-form-field>
+  
+          <mat-form-field>
+            <mat-label>Adresse</mat-label>
+            <input matInput formControlName="adresse" placeholder="Adresse" (input)="applyFilter()">
+          </mat-form-field>
+        </form>
+      </div>
+      <div>
+        <mat-card-content>
+          <table mat-table [dataSource]="dataSource" class="demo-table">
+            <ng-container matColumnDef="position">
+              <th mat-header-cell *matHeaderCellDef>No.</th>
+              <td mat-cell *matCellDef="let element">{{element.id}}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="nom">
+              <th mat-header-cell *matHeaderCellDef>Nom</th>
+              <td mat-cell *matCellDef="let element">{{element.nom}}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="telephone">
+              <th mat-header-cell *matHeaderCellDef>Telephone</th>
+              <td mat-cell *matCellDef="let element">{{element.telephone}}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="adresse">
+              <th mat-header-cell *matHeaderCellDef>Adresse</th>
+              <td mat-cell *matCellDef="let element">{{element.adresse}}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="companyName">
+              <th mat-header-cell *matHeaderCellDef>Entreprise</th>
+              <td mat-cell *matCellDef="let element">
+                <!-- Display the company name based on the entreprise_id -->
+                <span>{{ getCompanyName(element.entreprise_id) }}</span>
+              </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let element">
+                <button (click)="updateMagazinById(element.id)" mat-icon-button>
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button (click)="openDeleteDialog(element.id)" mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div>
+  
