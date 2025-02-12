@@ -1,1 +1,125 @@
-<p>list-produits works!</p>
+<div class="flex min-w-0 flex-auto flex-col">
+    <mat-card appearance="outlined">
+      <div class="flex justify-between items-center">
+        <mat-card-header>
+          Liste des produits
+        </mat-card-header>
+  
+        <button mat-raised-button color="primary" (click)="goToAddProduit()" class="mt-5 whitespace-nowrap">
+          <mat-icon>add</mat-icon>
+          Ajouter un produit
+        </button>
+      </div>
+  
+      <!-- Formulaire réactif pour les filtres -->
+      <form [formGroup]="filterForm" class="mt-4">
+        <!-- Sélection du type (magasin ou boutique) -->
+        <mat-form-field>
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="magasin">Magasin</mat-option>
+            <mat-option value="boutique">Boutique</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <!-- Sélection du magasin ou de la boutique -->
+        <mat-form-field *ngIf="filterForm.get('type')?.value === 'magasin'">
+          <mat-label>Magasin</mat-label>
+          <mat-select formControlName="magasin_id">
+            <mat-option value="">Sélectionner un magasin</mat-option>
+            <mat-option *ngFor="let magasin of magazins" [value]="magasin.id">
+              {{ magasin.nom }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field *ngIf="filterForm.get('type')?.value === 'boutique'">
+          <mat-label>Boutique</mat-label>
+          <mat-select formControlName="boutique_id">
+            <mat-option value="">Sélectionner une boutique</mat-option>
+            <mat-option *ngFor="let boutique of boutiques" [value]="boutique.id">
+              {{ boutique.nom }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <!-- Filtre par nom -->
+        <mat-form-field>
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="nom" placeholder="Nom">
+        </mat-form-field>
+  
+        <!-- Filtre par catégorie -->
+        <mat-form-field>
+          <mat-label>Catégorie</mat-label>
+          <mat-select formControlName="categorie_id">
+            <mat-option value="">Toutes les catégories</mat-option>
+            <mat-option *ngFor="let categorie of categories" [value]="categorie.id">
+              {{ categorie.nom }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+  
+      <!-- Tableau des produits -->
+      <div>
+        <mat-card-content>
+          <table mat-table [dataSource]="dataSource" class="demo-table">
+            <ng-container matColumnDef="position">
+              <th mat-header-cell *matHeaderCellDef>No.</th>
+              <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="nom">
+              <th mat-header-cell *matHeaderCellDef>Nom</th>
+              <td mat-cell *matCellDef="let element">{{ element.nom }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="prix_achat">
+              <th mat-header-cell *matHeaderCellDef>Prix d'achat</th>
+              <td mat-cell *matCellDef="let element">{{ element.prix_achat }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="prix_vente">
+              <th mat-header-cell *matHeaderCellDef>Prix de vente</th>
+              <td mat-cell *matCellDef="let element">{{ element.prix_vente }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="quantite">
+              <th mat-header-cell *matHeaderCellDef>Quantité</th>
+              <td mat-cell *matCellDef="let element">{{ element.quantite }}</td>
+            </ng-container>
+  
+            <ng-container matColumnDef="categorie">
+              <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+              <td mat-cell *matCellDef="let element">
+                {{ getCategorieName(element.categorie_id) }} <!-- Afficher le nom de la catégorie -->
+              </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let element">
+                <button (click)="updateProduitById(element.id)" mat-icon-button>
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button (click)="openDeleteDialog(element.id)" mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div>

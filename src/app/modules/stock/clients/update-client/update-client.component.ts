@@ -50,9 +50,7 @@ export class UpdateClientComponent {
   loadClientData(id: string) {
     this.clientService.getClientById(id).pipe(
       tap(response => {
-        if (response && response.status === 'success' && response.data) {
-          console.log(response.data);
-          
+        if (response && response.status === 'success' && response.data) {  
           this.updateClientForm.patchValue(response.data);
         } else {
           this.showSnackBar('Client introuvable', 'error');

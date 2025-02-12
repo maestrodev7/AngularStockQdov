@@ -44,6 +44,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon : 'heroicons_outline:shopping-bag',
         link : '/boutiques'
     }
+    ,
+    {
+        id   : 'produits',
+        title: 'produits',
+        type : 'basic',
+        icon : 'heroicons_outline:cube',
+        link : '/produits'
+    }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {

@@ -1,1 +1,8 @@
-<p>delete-produit-dialog works!</p>
+<h2 mat-dialog-title>Supression du produit</h2>
+<mat-dialog-content>
+  <p>Êtes vous sure de vouloir supprimer ce produit?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="dialogRef.close()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="confirmDelete()">Supprimer</button>
+</mat-dialog-actions>

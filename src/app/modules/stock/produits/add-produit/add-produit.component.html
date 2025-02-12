@@ -1,0 +1,148 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <div fxLayout="row" class="title flex justify-between items-center">
+      <h2>Ajouter un produit</h2>
+      <button mat-button (click)="backToProduitsList()">Retourner à la liste des produits</button>
+    </div>
+  
+    <div class="container">
+      <form class="input-form" [formGroup]="myForm" (ngSubmit)="onSubmit()">
+        <div class="div-content-add-and-delet-forms">
+          <!-- Nom -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Nom</mat-label>
+              <input matInput placeholder="Ex. Nom du produit" formControlName="nom" />
+              <mat-error *ngIf="myForm.get('nom')?.hasError('required')">
+                Le nom est <strong>requis</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <!-- Description -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Description</mat-label>
+              <textarea matInput placeholder="Ex. Description du produit" formControlName="description"></textarea>
+            </mat-form-field>
+          </div>
+  
+          <!-- Prix d'achat -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Prix d'achat</mat-label>
+              <input matInput type="number" placeholder="Ex. 10.50" formControlName="prix_achat" />
+              <mat-error *ngIf="myForm.get('prix_achat')?.hasError('required')">
+                Le prix d'achat est <strong>requis</strong>.
+              </mat-error>
+              <mat-error *ngIf="myForm.get('prix_achat')?.hasError('min')">
+                Le prix d'achat doit être <strong>positif</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <!-- Prix de vente -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Prix de vente</mat-label>
+              <input matInput type="number" placeholder="Ex. 15.00" formControlName="prix_vente" />
+              <mat-error *ngIf="myForm.get('prix_vente')?.hasError('required')">
+                Le prix de vente est <strong>requis</strong>.
+              </mat-error>
+              <mat-error *ngIf="myForm.get('prix_vente')?.hasError('min')">
+                Le prix de vente doit être <strong>positif</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <!-- Catégorie -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Catégorie</mat-label>
+              <mat-select formControlName="categorie_id">
+                <mat-option *ngFor="let categorie of categories" [value]="categorie.id">
+                  {{ categorie.nom }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="myForm.get('categorie_id')?.hasError('required')">
+                La catégorie est <strong>requise</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <!-- Date de péremption -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Date de péremption</mat-label>
+              <input matInput type="date" formControlName="date_peremption" />
+            </mat-form-field>
+          </div>
+  
+          <!-- Quantité -->
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Quantité</mat-label>
+              <input matInput type="number" placeholder="Ex. 100" formControlName="quantite" />
+              <mat-error *ngIf="myForm.get('quantite')?.hasError('required')">
+                La quantité est <strong>requise</strong>.
+              </mat-error>
+              <mat-error *ngIf="myForm.get('quantite')?.hasError('min')">
+                La quantité doit être <strong>positive</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="input-form-fields">
+            <mat-form-field>
+              <mat-label>Type de lieu</mat-label>
+              <mat-select formControlName="locationType">
+                <mat-option value="magasin">Magasin</mat-option>
+                <mat-option value="boutique">Boutique</mat-option>
+              </mat-select>
+              <mat-error *ngIf="myForm.get('locationType')?.hasError('required')">
+                Le type de lieu est <strong>requis</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <div class="input-form-fields" *ngIf="myForm.get('locationType')?.value === 'magasin'">
+            <mat-form-field>
+              <mat-label>Magasin</mat-label>
+              <mat-select formControlName="magasin_id">
+                <mat-option *ngFor="let magasin of magasins" [value]="magasin.id">
+                  {{ magasin.nom }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="myForm.get('magasin_id')?.hasError('required')">
+                Le magasin est <strong>requis</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+  
+          <!-- Boutique Field (Conditional) -->
+          <div class="input-form-fields" *ngIf="myForm.get('locationType')?.value === 'boutique'">
+            <mat-form-field>
+              <mat-label>Boutique</mat-label>
+              <mat-select formControlName="boutique_id">
+                <mat-option *ngFor="let boutique of boutiques" [value]="boutique.id">
+                  {{ boutique.nom }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="myForm.get('boutique_id')?.hasError('required')">
+                La boutique est <strong>requise</strong>.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+  
+        <!-- Buttons -->
+        <div class="button-container">
+          <button mat-raised-button [disabled]="myForm.invalid" type="submit" color="primary">
+            Ajouter
+          </button>
+          <button mat-raised-button type="reset" color="yellow">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
