@@ -81,6 +81,11 @@ export const appRoutes: Route[] = [
             {path: 'fournisseurs', loadChildren: () => import('app/modules//stock/fournisseurs/fournisseur.routes')},
             {path: 'clients', loadChildren: () => import('app/modules//stock/clients/clients.routes')},
             {path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes')},
+            {path: 'operations', children: [
+                {path: 'achats', loadChildren: () => import('app/modules/stock/operations/achats/achat.routes')},
+                {path: 'ventes', loadChildren: () => import('app/modules/stock/operations/ventes/vente.routes')},
+                {path: 'transferts', loadChildren: () => import('app/modules/stock/operations/transferts/transfert.routes')},
+              ]},
         ]
     }
 ];

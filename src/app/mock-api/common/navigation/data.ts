@@ -51,7 +51,36 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type : 'basic',
         icon : 'heroicons_outline:cube',
         link : '/produits'
-    }
+    },
+    {
+        id: 'oprations',
+        title: 'Operations',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+            {
+                id: 'oprations.achats',
+                title: 'Achats',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/operations/achats',
+            },
+            {
+                id: 'oprations.ventes',
+                title: 'Ventes',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/operations/ventes',
+            },
+            {
+                id: 'oprations.transferts',
+                title: 'Transferts',
+                type: 'basic',
+                icon: 'heroicons_outline:clipboard-document-check',
+                link: '/operations/transferts',
+            }
+        ],
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {
