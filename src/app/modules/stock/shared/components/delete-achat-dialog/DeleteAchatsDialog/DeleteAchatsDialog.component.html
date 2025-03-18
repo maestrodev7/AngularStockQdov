@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Suppression de l'achat</h2>
+<mat-dialog-content>
+  <p>Êtes-vous sûr de vouloir supprimer cet achat ?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="dialogRef.close()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="confirmDelete()">Supprimer</button>
+</mat-dialog-actions>

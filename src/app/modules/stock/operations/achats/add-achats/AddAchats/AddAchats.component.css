@@ -1,0 +1,71 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 80px;
+  }
+  .input-form {
+    width: 100%;
+  }
+
+  .input-form-fields {
+    display: flex;
+  }
+  .title {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 3%;
+  }
+  .align-right {
+    text-align: right;
+    margin: 30px;
+  }
+  .container mat-form-field  {
+    margin-left: 16px;
+    margin-right: 16px;
+    flex: 1;
+  }
+
+
+  mat-card {
+    padding-top: 20px;
+    margin: 15px;
+  }
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 60px;
+  }
+  .spinner-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .link-style {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .link-style:hover {
+    color: darkblue;
+  }
+
+  .snackbar-success {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .snackbar-error {
+    background-color: #f44336;
+    color: white;
+  }
+  h1{
+    margin-left: 16px;
+  }
+  .div-content-add-and-delet-forms{
+    background-color: white;
+    margin: 5%;
+    padding: 3%;
+    border-radius: 4px;
+  }

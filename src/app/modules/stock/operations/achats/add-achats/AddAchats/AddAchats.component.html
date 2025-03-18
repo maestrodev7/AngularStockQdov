@@ -1,0 +1,89 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <div class="title flex justify-between items-center">
+      <h2>Ajouter un achat</h2>
+      <button mat-button (click)="backToAchatsList()">Retourner à la liste des achats</button>
+    </div>
+    <div class="container">
+      <form class="input-form" [formGroup]="achatsForm" (ngSubmit)="onSubmit()">
+        <!-- Sélection du fournisseur via une liste déroulante -->
+        <div class="input-form-fields">
+          <mat-form-field appearance="outline">
+            <mat-label>Fournisseur</mat-label>
+            <mat-select formControlName="supplier_id">
+              <mat-option *ngFor="let supplier of supplierOptions" [value]="supplier.id">
+                {{ supplier.nom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="achatsForm.get('supplier_id')?.hasError('required')">
+              Le fournisseur est <strong>requis</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Liste dynamique des items (produits) -->
+        <div formArrayName="items">
+          <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="item-group">
+            <div class="input-form-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>Produit</mat-label>
+                <mat-select formControlName="product_id">
+                  <mat-option *ngFor="let product of productOptions" [value]="product.id">
+                    {{ product.nom }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="item.get('product_id')?.hasError('required')">
+                  Le produit est <strong>requis</strong>.
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="input-form-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>Quantité</mat-label>
+                <input matInput type="number" placeholder="Ex. 10" formControlName="quantite">
+                <mat-error *ngIf="item.get('quantite')?.hasError('required')">
+                  La quantité est <strong>requise</strong>.
+                </mat-error>
+                <mat-error *ngIf="item.get('quantite')?.hasError('min')">
+                  La quantité doit être au moins 1.
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="input-form-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>Prix d'achat</mat-label>
+                <input matInput type="number" placeholder="Ex. 100" formControlName="prix_achat">
+                <mat-error *ngIf="item.get('prix_achat')?.hasError('required')">
+                  Le prix est <strong>requis</strong>.
+                </mat-error>
+                <mat-error *ngIf="item.get('prix_achat')?.hasError('min')">
+                  Le prix ne peut pas être négatif.
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="button-container">
+              <button mat-raised-button type="button" color="warn" (click)="removeItem(i)" *ngIf="items.length > 1">
+                Supprimer ce produit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bouton pour ajouter un autre produit -->
+        <div class="button-container">
+          <button mat-raised-button type="button" (click)="addItem()" color="accent">
+            Ajouter un autre produit
+          </button>
+        </div>
+
+        <!-- Boutons de validation ou annulation -->
+        <div class="button-container">
+          <button mat-raised-button [disabled]="achatsForm.invalid" type="submit" color="primary">
+            Ajouter
+          </button>
+          <button mat-raised-button type="reset" color="warn">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
