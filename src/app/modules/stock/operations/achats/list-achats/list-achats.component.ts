@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { debounceTime, distinctUntilChanged, filter, forkJoin, map, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, forkJoin, map, of, switchMap } from 'rxjs';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 import { Router } from '@angular/router';
@@ -76,23 +76,44 @@ export class ListAchatsComponent implements OnInit, AfterViewInit {
     this.achatsService.getPurchasesByFilter(filters).pipe(
       switchMap((response: PurchasesPaged) => {
         const achats = response.data;
-        const observables = achats.map(achat =>
-          forkJoin({
-            supplier: this.supplierService.getFourisseurById(achat.supplier_id.toString()),
-            product: this.productService.getProduitById(achat.product_id.toString())
+        const supplierIds = Array.from(new Set(achats.map(achat => achat.supplier_id)));
+        const productIds = Array.from(new Set(achats.map(achat => achat.product_id)));
+        return forkJoin({
+          suppliers: forkJoin(
+            supplierIds.map(id =>
+              this.supplierService.getFourisseurById(id.toString()).pipe(
+                map(supplierResponse => ({
+                  id,
+                  nom: (supplierResponse.data as any).nom
+                }))
+              )
+            )
+          ),
+          products: forkJoin(
+            productIds.map(id =>
+              this.productService.getProduitById(id.toString()).pipe(
+                map(productResponse => ({
+                  id,
+                  nom: (productResponse.data as any).nom
+                }))
+              )
+            )
+          ),
+          achats: of(achats)
+        });
+      }),
+      map(({ suppliers, products, achats }) => {
+        const supplierMap = new Map<number, string>();
+        suppliers.forEach(s => supplierMap.set(s.id, s.nom));
 
-          }).pipe(
-            map(({ supplier, product }) => {
-              return {
-                ...achat,
-                supplier_name: (supplier.data as any).nom,
-                product_name: (product.data as any).nom
-              };
+        const productMap = new Map<number, string>();
+        products.forEach(p => productMap.set(p.id, p.nom));
 
-            })
-          )
-        );
-        return forkJoin(observables);
+        return achats.map(achat => ({
+          ...achat,
+          supplier_name: supplierMap.get(achat.supplier_id),
+          product_name: productMap.get(achat.product_id)
+        }));
       })
     ).subscribe(
       (achatsEnrichis: Purchase[]) => {
@@ -103,6 +124,7 @@ export class ListAchatsComponent implements OnInit, AfterViewInit {
       }
     );
   }
+
 
   goToAddAchat(): void {
     this.router.navigate(['/operations/achats/add-achats']);

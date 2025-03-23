@@ -97,7 +97,7 @@ export class AddAchatsComponent implements OnInit {
           this.achatsForm.reset();
           this.errorMessage = null;
           this.showSnackBar('L\'achat a été ajouté avec succès!', 'success');
-          this.router.navigate(['/achats']);
+          this.router.navigate(['operations/achats']);
         }),
         catchError(error => {
           this.showSnackBar('Erreur lors de l\'ajout de l\'achat.', 'error');
