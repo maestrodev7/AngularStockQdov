@@ -127,7 +127,7 @@ export class ListAchatsComponent implements OnInit, AfterViewInit {
 
 
   goToAddAchat(): void {
-    this.router.navigate(['/operations/achats/add-achats']);
+    this.router.navigate(['/operations/achats/add-achat']);
   }
 
   openDeleteDialog(achatId: number): void {
@@ -151,7 +151,7 @@ export class ListAchatsComponent implements OnInit, AfterViewInit {
   }
 
   updateAchatById(achatId: number): void {
-    this.router.navigate(['/achats/update-achats', achatId]);
+    this.router.navigate(['/operations/achats/update-achat', achatId]);
   }
 
   private showSnackBar(message: string, type: 'success' | 'error'): void {

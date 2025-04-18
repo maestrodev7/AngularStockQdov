@@ -1,5 +1,6 @@
 import { AddAchatsComponent } from "./add-achats/AddAchats/AddAchats.component";
 import { ListAchatsComponent } from "./list-achats/list-achats.component";
+import { UpdateAchatComponent } from "./update-achat/update-achat/update-achat.component";
 
 export default [
     {
@@ -7,7 +8,11 @@ export default [
         component: ListAchatsComponent
     },
     {
-        path     : 'add-achats',
-        component: AddAchatsComponent,
+        path: 'update-achat/:id',
+        component: UpdateAchatComponent
     },
+    {
+        path: 'add-achat',
+        component: AddAchatsComponent,
+    }
 ]

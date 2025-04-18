@@ -136,11 +136,11 @@ export class ListVentesComponent implements OnInit, AfterViewInit {
   }
 
   goToAddSale(): void {
-    this.router.navigate(['/operations/ventes/add-ventes']);
+    this.router.navigate(['/operations/ventes/add-vente']);
   }
 
   updateSaleById(saleId: number): void {
-    this.router.navigate(['/ventes/update-ventes', saleId]);
+    this.router.navigate(['/operations/ventes/update-vente', saleId]);
   }
 
   openDeleteDialog(saleId: number): void {

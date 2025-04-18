@@ -1,0 +1,79 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <div class="title flex justify-between items-center">
+      <h2>Modifier une vente</h2>
+      <button mat-button (click)="backToVentesList()">Retourner à la liste des ventes</button>
+    </div>
+    <div class="container">
+      <form class="input-form" [formGroup]="venteForm" (ngSubmit)="onSubmit()">
+        <!-- Client selection via a dropdown list -->
+        <div class="input-form-fields">
+          <mat-form-field appearance="outline">
+            <mat-label>Client</mat-label>
+            <mat-select formControlName="client_id">
+              <mat-option *ngFor="let client of clientOptions" [value]="client.id">
+                {{ client.nom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="venteForm.get('client_id')?.hasError('required')">
+              Le client est <strong>requis</strong>.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Dynamic list of sale items -->
+        <div formArrayName="items">
+          <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="item-group">
+            <div class="input-form-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>Produit</mat-label>
+                <mat-select formControlName="product_id">
+                  <mat-option *ngFor="let product of productOptions" [value]="product.id">
+                    {{ product.nom }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="item.get('product_id')?.hasError('required')">
+                  Le produit est <strong>requis</strong>.
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="input-form-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>Quantité</mat-label>
+                <input matInput type="number" placeholder="Ex. 10" formControlName="quantite">
+                <mat-error *ngIf="item.get('quantite')?.hasError('required')">
+                  La quantité est <strong>requise</strong>.
+                </mat-error>
+                <mat-error *ngIf="item.get('quantite')?.hasError('min')">
+                  La quantité doit être au moins 1.
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="input-form-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>Prix de vente</mat-label>
+                <input matInput type="number" placeholder="Ex. 100" formControlName="prix_vente">
+                <mat-error *ngIf="item.get('prix_vente')?.hasError('required')">
+                  Le prix est <strong>requis</strong>.
+                </mat-error>
+                <mat-error *ngIf="item.get('prix_vente')?.hasError('min')">
+                  Le prix ne peut pas être négatif.
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- Submit or reset the form -->
+        <div class="button-container">
+          <button mat-raised-button [disabled]="venteForm.invalid" type="submit" color="primary">
+            Modifier
+          </button>
+          <button mat-raised-button type="reset" color="warn">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -4,6 +4,7 @@ import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { Purchase } from '../../interfaces/Achats/Purchase';
 import { PurchasesPaged } from '../../interfaces/Achats/PurchasesPaged';
+import { ResponsePurchase } from '../../interfaces/Achats/ResponsePurchase';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +35,8 @@ export class AchatsService {
     return this.http.get<PurchasesPaged>(this.url, { params });
   }
 
-  getPurchaseById(id: string): Observable<Purchase> {
-    return this.http.get<Purchase>(`${this.url}/${id}`);
+  getPurchaseById(id: string): Observable<ResponsePurchase> {
+    return this.http.get<ResponsePurchase>(`${this.url}/${id}`);
   }
 
   deletePurchase(purchaseId: number): Observable<void> {
