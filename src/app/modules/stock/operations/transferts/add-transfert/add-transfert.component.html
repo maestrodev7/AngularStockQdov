@@ -1,0 +1,84 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <mat-card appearance="outlined">
+      <div class="flex justify-between items-center mb-4">
+        <h2>Ajouter un transfert</h2>
+        <button mat-button (click)="backToTransferList()">Retour</button>
+      </div>
+
+      <form [formGroup]="transfertForm" (ngSubmit)="onSubmit()" class="grid gap-4">
+        <!-- Produit -->
+        <mat-form-field appearance="outline">
+          <mat-label>Produit</mat-label>
+          <mat-select formControlName="product_id">
+            <mat-option *ngFor="let p of products" [value]="p.id">{{ p.nom }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="transfertForm.get('product_id')?.hasError('required')">
+            Le produit est requis
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Origine -->
+        <div class="flex gap-4">
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Type d'origine</mat-label>
+            <mat-select formControlName="from_type">
+              <mat-option value="STORE">Magasin</mat-option>
+              <mat-option value="SHOP">Boutique</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Origine</mat-label>
+            <mat-select formControlName="from_id">
+              <mat-option *ngFor="let m of transfertForm.value.from_type === 'STORE' ? magasins : boutiques" [value]="m.id">
+                {{ m.nom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="transfertForm.get('from_id')?.hasError('required')">
+              L'origine est requise
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Destination -->
+        <div class="flex gap-4">
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Type de destination</mat-label>
+            <mat-select formControlName="to_type">
+              <mat-option value="STORE">Magasin</mat-option>
+              <mat-option value="SHOP">Boutique</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Destination</mat-label>
+            <mat-select formControlName="to_id">
+              <mat-option *ngFor="let b of transfertForm.value.to_type === 'STORE' ? magasins : boutiques" [value]="b.id">
+                {{ b.nom }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="transfertForm.get('to_id')?.hasError('required')">
+              La destination est requise
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Quantité -->
+        <mat-form-field appearance="outline">
+          <mat-label>Quantité</mat-label>
+          <input matInput type="number" formControlName="quantity" />
+          <mat-error *ngIf="transfertForm.get('quantity')?.hasError('min')">
+            La quantité doit être au moins 1
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Actions -->
+        <div class="flex gap-4 justify-end">
+          <button mat-raised-button color="primary" type="submit" [disabled]="transfertForm.invalid">
+            Transférer
+          </button>
+          <button mat-button type="button" (click)="transfertForm.reset()">Annuler</button>
+        </div>
+      </form>
+    </mat-card>
+  </div>

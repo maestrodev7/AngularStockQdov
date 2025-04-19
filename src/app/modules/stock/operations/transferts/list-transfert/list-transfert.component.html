@@ -1,1 +1,128 @@
-<p>list-transfert works!</p>
+<div class="flex min-w-0 flex-auto flex-col">
+    <mat-card appearance="outlined">
+      <!-- En‑tête avec bouton d'ajout -->
+      <div class="flex justify-between items-center">
+        <mat-card-header>Liste des transferts</mat-card-header>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="goToAddTransfer()"
+          class="mt-5 whitespace-nowrap"
+        >
+          <mat-icon>add</mat-icon>
+          Ajouter un transfert
+        </button>
+      </div>
+
+      <!-- Formulaire de filtrage (horizontal) -->
+      <div>
+        <h5>Filtrer par …</h5>
+        <form [formGroup]="filterForm" class="flex flex-wrap gap-4 items-end mb-4">
+            <mat-form-field appearance="fill" class="flex-1 min-w-[150px]">
+                <mat-label>Date de début</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="startPicker"
+                  formControlName="startDate"
+                  placeholder="Choisissez une date"
+                />
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+
+              <!-- Date de fin -->
+              <mat-form-field appearance="fill" class="flex-1 min-w-[150px]">
+                <mat-label>Date de fin</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="endPicker"
+                  formControlName="endDate"
+                  placeholder="Choisissez une date"
+                />
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+
+          <mat-form-field appearance="fill" class="flex-1 min-w-[120px]">
+            <mat-label>Origine</mat-label>
+            <mat-select formControlName="from_type">
+              <mat-option value="magasins">Magasin</mat-option>
+              <mat-option value="boutiques">Boutique</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="flex-1 min-w-[120px]">
+            <mat-label>Nom origine</mat-label>
+            <mat-select formControlName="from_id">
+              <mat-option *ngFor="let m of filterForm.value.fromType === 'magasins' ? magasins : boutiques" [value]="m.id">
+                {{ m.nom }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="flex-1 min-w-[120px]">
+            <mat-label>Destination</mat-label>
+            <mat-select formControlName="to_type">
+              <mat-option value="magasins">Magasin</mat-option>
+              <mat-option value="boutiques">Boutique</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="flex-1 min-w-[120px]">
+            <mat-label>Nom destination</mat-label>
+            <mat-select formControlName="to_id">
+              <mat-option *ngFor="let b of filterForm.value.toType === 'magasins' ? magasins : boutiques" [value]="b.id">
+                {{ b.nom }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+      </div>
+
+      <!-- Tableau des transferts -->
+      <mat-card-content>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let t">{{ t.id }}</td>
+          </ng-container>
+
+          <!-- Produit -->
+          <ng-container matColumnDef="produitName">
+            <th mat-header-cell *matHeaderCellDef>Produit</th>
+            <td mat-cell *matCellDef="let t">{{ t.produitName }}</td>
+          </ng-container>
+
+          <!-- De -->
+          <ng-container matColumnDef="fromLocationName">
+            <th mat-header-cell *matHeaderCellDef>De</th>
+            <td mat-cell *matCellDef="let t">{{ t.fromLocationName }}</td>
+          </ng-container>
+
+          <!-- Vers -->
+          <ng-container matColumnDef="toLocationName">
+            <th mat-header-cell *matHeaderCellDef>Vers</th>
+            <td mat-cell *matCellDef="let t">{{ t.toLocationName }}</td>
+          </ng-container>
+
+          <!-- Quantité -->
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantité</th>
+            <td mat-cell *matCellDef="let t">{{ t.quantity }}</td>
+          </ng-container>
+
+          <!-- Date -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let t">{{ t.createdAt | date:'short' }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
