@@ -57,9 +57,14 @@ export class AddAchatsComponent implements OnInit {
     this.fournisseurService.getFournisseursByFilter(null).subscribe(response => {
       this.supplierOptions = response.data;
     });
+    const filter = {};
+    console.log("cdscs");
 
-    this.produitService.getProduitsByFilter(null).subscribe(response => {
-      this.productOptions = response.data;
+    this.produitService.getProduitsByFilter(filter).subscribe(response => {
+        console.log('Produits:', response);
+
+      this.productOptions = response.data.data;
+
     });
   }
 

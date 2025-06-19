@@ -12,7 +12,7 @@ import { FournisseurService } from 'app/modules/stock/services/fournisseurs/four
 import { ProduitService } from 'app/modules/stock/services/produits/produit.service';
 import { SnackbarErrorComponent } from 'app/modules/stock/shared/components/snackbar-error/snackbar-error.component';
 import { SnackbarSuccessComponent } from 'app/modules/stock/shared/components/snackbar-success/snackbar-success.component';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, forkJoin, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-update-achat',
@@ -46,43 +46,46 @@ export class UpdateAchatComponent implements OnInit{
   ) {}
 
 
-    ngOnInit(): void {
-      this.achatForm = this.fb.group({
-        supplier_id: [null, Validators.required],
-        items: this.fb.array([this.createItem()])
-      });
+ngOnInit(): void {
+  this.achatForm = this.fb.group({
+    supplier_id: [null, Validators.required],
+    items: this.fb.array([this.createItem()])
+  });
 
-      this.purchaseId = this.route.snapshot.paramMap.get('id')!;
+  this.purchaseId = this.route.snapshot.paramMap.get('id')!;
 
-      this.achatService.getPurchaseById(this.purchaseId).subscribe(
-        (response) => {
-          const purchaseData = response.data;
-          this.achatForm.patchValue({
-            supplier_id: purchaseData.supplier_id
-          });
-          const itemsArray = this.achatForm.get('items') as FormArray;
-          itemsArray.clear();
-          itemsArray.push(
-            this.fb.group({
-              product_id: [purchaseData.product_id, Validators.required],
-              quantite: [purchaseData.quantity, [Validators.required, Validators.min(1)]],
-              prix_achat: [purchaseData.price, [Validators.required, Validators.min(0)]]
-            })
-          );
-        },
-        (error) => {
-          this.showSnackBar("Erreur lors du chargement de la vente.", 'error');
-        }
-      );
+  const achat$ = this.achatService.getPurchaseById(this.purchaseId);
+  const fournisseurs$ = this.fournisseurService.getFournisseursByFilter();
+  const produits$ = this.produitService.getProduitsByFilter();
 
-      this.fournisseurService.getFournisseursByFilter(null).subscribe(response => {
-        this.supplierOptions = response.data;
-      });
+  forkJoin({ achat: achat$, fournisseurs: fournisseurs$, produits: produits$ }).subscribe({
+    next: ({ achat, fournisseurs, produits }) => {
+      const purchaseData = achat.data;
 
-      this.produitService.getProduitsByFilter(null).subscribe(response => {
-        this.productOptions = response.data;
-      });
-    }
+      this.supplierOptions = fournisseurs.data;
+      this.productOptions = produits.data.data;
+
+      if (!this.supplierOptions.find(f => f.id === purchaseData.supplier_id) && purchaseData.fournisseur) {
+        this.supplierOptions.push(purchaseData.fournisseur);
+      }
+
+      if (!this.productOptions.find(p => p.id === purchaseData.product_id) && purchaseData.product) {
+        this.productOptions.push(purchaseData.product);
+      }
+
+      this.achatForm.patchValue({ supplier_id: purchaseData.supplier_id });
+      const itemsArray = this.achatForm.get('items') as FormArray;
+      itemsArray.clear();
+      itemsArray.push(this.fb.group({
+        product_id: [purchaseData.product_id, Validators.required],
+        quantite: [purchaseData.quantity, [Validators.required, Validators.min(1)]],
+        prix_achat: [purchaseData.price, [Validators.required, Validators.min(0)]]
+      }));
+    },
+    error: () => this.showSnackBar('Erreur lors du chargement de l\'achat.', 'error')
+  });
+}
+
     get items(): FormArray {
         return this.achatForm.get('items') as FormArray;
       }
@@ -110,8 +113,18 @@ export class UpdateAchatComponent implements OnInit{
 
       onSubmit(): void {
         if (this.achatForm.valid) {
-          const saleData = this.achatForm.value;
-          this.achatService.updatePurchase(saleData,this.purchaseId).pipe(
+            const saleData = this.achatForm.value;
+            const item = saleData.items[0];
+
+            const payload = {
+            supplier_id: saleData.supplier_id,
+            product_id: item.product_id,
+            quantity: item.quantite,
+            price: item.prix_achat,
+            total_price: item.quantite * item.prix_achat
+            };
+
+          this.achatService.updatePurchase(payload,this.purchaseId).pipe(
             tap(() => {
               this.errorMessage = null;
               this.showSnackBar('L`achat a été modifiée avec succès!', 'success');

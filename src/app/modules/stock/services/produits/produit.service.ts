@@ -28,23 +28,14 @@ export class ProduitService {
     return this.http.put<Produit>(`${this.url}/${id}`, produit);
   }
 
-  getProduitsByFilter(filterModel: Produit | null = null): Observable<ProduitsPaged> {
+  getProduitsByFilter(filters: any = {}): Observable<ProduitsPaged> {
     let params = new HttpParams();
-
-    if (filterModel) {
-      if (filterModel.nom) {
-        params = params.set('nom', filterModel.nom);
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
+        params = params.set(key, filters[key]);
       }
-      if (filterModel.categorie_id) {
-        params = params.set('categorie_id', filterModel.categorie_id.toString());
-      }
-      if (filterModel.magasin_id) {
-        params = params.set('magasin_id', filterModel.magasin_id.toString());
-      }
-      if (filterModel.boutique_id) {
-        params = params.set('boutique_id', filterModel.boutique_id.toString());
-      }
-    }
+    });
+    console.log(params);
 
     return this.http.get<ProduitsPaged>(this.url, { params });
   }
@@ -58,11 +49,23 @@ export class ProduitService {
     return this.http.delete<void>(deleteUrl);
   }
 
-  getProduitsByMagasin(magasinId: number): Observable<ProduitsPaged> {
-    return this.http.get<ProduitsPaged>(`${this.url}/magasin/${magasinId}`);
+  getProduitsByMagasin(magasinId: number, filters: any = {}): Observable<ProduitsPaged> {
+    let params = new HttpParams();
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
+        params = params.set(key, filters[key]);
+      }
+    });
+    return this.http.get<ProduitsPaged>(`${this.url}/magasin/${magasinId}`, { params });
   }
 
-  getProduitsByBoutique(magasinId: number): Observable<ProduitsPaged> {
-    return this.http.get<ProduitsPaged>(`${this.url}/boutique/${magasinId}`);
+  getProduitsByBoutique(boutiqueId: number, filters: any = {}): Observable<ProduitsPaged> {
+    let params = new HttpParams();
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
+        params = params.set(key, filters[key]);
+      }
+    });
+    return this.http.get<ProduitsPaged>(`${this.url}/boutique/${boutiqueId}`, { params });
   }
 }

@@ -54,7 +54,7 @@ export class AddVenteComponent implements OnInit {
 
         // Fetch products to populate the dropdown list for each sale item
         this.produitService.getProduitsByFilter(null).subscribe(response => {
-          this.productOptions = response.data;
+          this.productOptions = response.data.data;
         });
       }
 

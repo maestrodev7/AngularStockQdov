@@ -19,7 +19,7 @@ export class AchatsService {
     return this.http.post<Purchase>(this.url, purchase);
   }
 
-  updatePurchase(purchase: Purchase, id: string): Observable<Purchase> {
+  updatePurchase(purchase: any, id: string): Observable<Purchase> {
     return this.http.put<Purchase>(`${this.url}/${id}`, purchase);
   }
 

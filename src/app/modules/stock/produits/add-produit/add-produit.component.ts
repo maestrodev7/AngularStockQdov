@@ -15,6 +15,8 @@ import { CommonModule } from '@angular/common';
 import { magasinOrBoutiqueValidator } from '../../common/custom-valodators/magasin-boutique.validator';
 import { CategoryService } from '../../services/category/category.service';
 import { Category } from '../../interfaces/category/category';
+import { forkJoin, map, Observable, startWith, take } from 'rxjs';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-add-produit',
@@ -26,6 +28,7 @@ import { Category } from '../../interfaces/category/category';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatAutocompleteModule
   ],
   templateUrl: './add-produit.component.html',
   styleUrls: ['./add-produit.component.scss'],
@@ -35,13 +38,14 @@ export class AddProduitComponent implements OnInit {
   magasins: Magazin[] = [];
   boutiques: Boutique[] = [];
   categories: Category[] = [];
+  filteredCategories$!: Observable<Category[]>;
 
   constructor(
     private fb: FormBuilder,
     private produitService: ProduitService,
-    private magazinService: MagazinService,
-    private boutiqueService: BoutiqueService,
-    private categorieService: CategoryService,
+    private magazinSvc: MagazinService,
+    private boutiqueSvc: BoutiqueService,
+    private categorySvc: CategoryService,
     private router: Router
   ) {
     this.myForm = this.fb.group({
@@ -61,46 +65,55 @@ export class AddProduitComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadMagasins();
-    this.loadBoutiques();
-    this.loadCategories();
-  }
+    forkJoin({
+      mags: this.magazinSvc.getMagazinByFilter().pipe(take(1)),
+      bouts: this.boutiqueSvc.getShopByFilter().pipe(take(1)),
+      cats: this.categorySvc.getAllCategories().pipe(take(1)),
+    }).subscribe(({ mags, bouts, cats }) => {
+      this.magasins   = mags.data;
+      this.boutiques  = bouts.data;
+      this.categories = cats.data;
 
-  loadMagasins(): void {
-    this.magazinService.getMagazinByFilter().subscribe((data) => {
-      this.magasins = data.data;
+      this.filteredCategories$ = this.myForm.get('categorie_id')!.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filterCategories(value))
+      );
     });
   }
-
-  loadBoutiques(): void {
-    this.boutiqueService.getShopByFilter().subscribe((data) => {
-      this.boutiques = data.data;
-    });
+  private _filterCategories(value: string | number): Category[] {
+    const filterValue = (typeof value === 'string' ? value : this._getNomById(value)).toLowerCase();
+    return this.categories.filter(cat =>
+      cat.nom.toLowerCase().includes(filterValue)
+    );
   }
 
-  loadCategories(): void {
-    this.categorieService.getAllCategories().subscribe((data) => {
-      this.categories = data.data;
-    });
+  // pour l'affichage dans le champ texte lorsque l'ID est déjà défini
+  displayCategorie(id: number): string {
+    return this._getNomById(id) || '';
   }
 
+  private _getNomById(id: number): string {
+    const found = this.categories.find(c => c.id === id);
+    return found ? found.nom : '';
+  }
   onSubmit(): void {
-    if (this.myForm.valid) {
-      const produitData: Produit = {
+    if (this.myForm.invalid) {
+        this.myForm.markAllAsTouched();
+        return;
+      }
+
+      const payload: Produit = {
         ...this.myForm.value,
-        from_magazin: this.myForm.get('locationType')?.value === 'magasin',
+        from_magazin: this.myForm.value.locationType === 'magasin',
       };
 
-      if (produitData.from_magazin) {
-        this.produitService.addProduitToMagasin(produitData).subscribe((response) => {
-          this.router.navigate(['/produits']);
-        });
-      } else {
-        this.produitService.addProduitToBoutique(produitData).subscribe((response) => {
-          this.router.navigate(['/produits']);
-        });
-      }
-    }
+      const action$ = payload.from_magazin
+        ? this.produitService.addProduitToMagasin(payload)
+        : this.produitService.addProduitToBoutique(payload);
+
+      action$.pipe(take(1)).subscribe(() => {
+        this.router.navigate(['/produits']);
+      });
   }
 
   backToProduitsList(): void {

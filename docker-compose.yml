@@ -1,0 +1,33 @@
+services:
+  app:  # Service pour l'application Angular.
+    build:
+      context: .  # Définit le contexte de construction, ici le répertoire courant.
+      dockerfile: Dockerfile  # Spécifie le Dockerfile à utiliser pour construire l'image.
+    container_name: angular_stock_qdov  # Nom du conteneur pour l'application.
+    volumes:
+      - app-dist:/usr/share/nginx/html
+    restart: always  # Redémarre le conteneur automatiquement sauf s'il est arrêté manuellement.
+    ports:
+      - "1200:80"  # Mappe le port 4200 de l'hôte au port 80 de Nginx dans le conteneur.
+    networks:
+      - dashboard-network  # Connecte le conteneur au réseau personnalisé.
+
+  nginx:  # Service pour Nginx.
+    image: nginx:stable-alpine  # Utilise une image stable de Nginx basée sur Alpine.
+    container_name: nginx-angular_stock_qdov  # Nom du conteneur pour Nginx.
+    depends_on:
+      - app  # Nginx dépend de l'application Angular.
+    ports:
+      - "8085:80"  # Mappe le port 8082 de l'hôte au port 80 de Nginx.
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf  # Monte le fichier de configuration Nginx.
+      - app-dist:/usr/share/nginx/html
+    networks:
+      - dashboard-network  # Connecte ce service au même réseau que l'application.
+
+volumes:
+  app-dist: {}
+
+networks:
+  dashboard-network:  # Définit un réseau personnalisé pour la communication entre les conteneurs.
+    driver: bridge  # Utilise le driver `bridge` pour le réseau.

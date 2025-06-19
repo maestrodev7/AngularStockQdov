@@ -3,7 +3,7 @@
       <h2>Ajouter un produit</h2>
       <button mat-button (click)="backToProduitsList()">Retourner à la liste des produits</button>
     </div>
-  
+
     <div class="container">
       <form class="input-form" [formGroup]="myForm" (ngSubmit)="onSubmit()">
         <div class="div-content-add-and-delet-forms">
@@ -17,7 +17,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-  
+
           <!-- Description -->
           <div class="input-form-fields">
             <mat-form-field>
@@ -25,7 +25,7 @@
               <textarea matInput placeholder="Ex. Description du produit" formControlName="description"></textarea>
             </mat-form-field>
           </div>
-  
+
           <!-- Prix d'achat -->
           <div class="input-form-fields">
             <mat-form-field>
@@ -39,7 +39,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-  
+
           <!-- Prix de vente -->
           <div class="input-form-fields">
             <mat-form-field>
@@ -53,22 +53,37 @@
               </mat-error>
             </mat-form-field>
           </div>
-  
+
           <!-- Catégorie -->
           <div class="input-form-fields">
-            <mat-form-field>
-              <mat-label>Catégorie</mat-label>
-              <mat-select formControlName="categorie_id">
-                <mat-option *ngFor="let categorie of categories" [value]="categorie.id">
-                  {{ categorie.nom }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="myForm.get('categorie_id')?.hasError('required')">
-                La catégorie est <strong>requise</strong>.
-              </mat-error>
-            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Catégorie</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  formControlName="categorie_id"
+                  [matAutocomplete]="auto"
+                  placeholder="Rechercher une catégorie…" />
+
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  [displayWith]="displayCategorie">
+
+                  <mat-option
+                    *ngFor="let cat of filteredCategories$ | async"
+                    [value]="cat.id">
+                    {{ cat.nom }}
+                  </mat-option>
+
+                </mat-autocomplete>
+
+                <mat-error *ngIf="myForm.get('categorie_id')?.hasError('required')">
+                  La catégorie est <strong>requise</strong>.
+                </mat-error>
+              </mat-form-field>
+
           </div>
-  
+
           <!-- Date de péremption -->
           <div class="input-form-fields">
             <mat-form-field>
@@ -76,7 +91,7 @@
               <input matInput type="date" formControlName="date_peremption" />
             </mat-form-field>
           </div>
-  
+
           <!-- Quantité -->
           <div class="input-form-fields">
             <mat-form-field>
@@ -103,7 +118,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-  
+
           <div class="input-form-fields" *ngIf="myForm.get('locationType')?.value === 'magasin'">
             <mat-form-field>
               <mat-label>Magasin</mat-label>
@@ -117,7 +132,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-  
+
           <!-- Boutique Field (Conditional) -->
           <div class="input-form-fields" *ngIf="myForm.get('locationType')?.value === 'boutique'">
             <mat-form-field>
@@ -133,7 +148,7 @@
             </mat-form-field>
           </div>
         </div>
-  
+
         <!-- Buttons -->
         <div class="button-container">
           <button mat-raised-button [disabled]="myForm.invalid" type="submit" color="primary">

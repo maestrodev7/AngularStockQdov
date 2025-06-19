@@ -79,7 +79,7 @@ export class UpdateVenteComponent implements OnInit {
     });
 
     this.produitService.getProduitsByFilter(null).subscribe(response => {
-      this.productOptions = response.data;
+      this.productOptions = response.data.data;
     });
   }
 

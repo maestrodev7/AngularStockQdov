@@ -95,7 +95,7 @@ export class ListVentesComponent implements OnInit, AfterViewInit {
           id: client.id,
           nom: client.nom
         }));
-        this.products = produitsResponse.data.map((produit: any) => ({
+        this.products = produitsResponse.data.data.map((produit: any) => ({
           id: produit.id,
           nom: produit.nom
         }));

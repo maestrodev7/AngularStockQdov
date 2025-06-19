@@ -71,59 +71,28 @@ export class ListAchatsComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  getAchats(): void {
-    const filters = this.filterForm.value;
-    this.achatsService.getPurchasesByFilter(filters).pipe(
-      switchMap((response: PurchasesPaged) => {
-        const achats = response.data;
-        const supplierIds = Array.from(new Set(achats.map(achat => achat.supplier_id)));
-        const productIds = Array.from(new Set(achats.map(achat => achat.product_id)));
-        return forkJoin({
-          suppliers: forkJoin(
-            supplierIds.map(id =>
-              this.supplierService.getFourisseurById(id.toString()).pipe(
-                map(supplierResponse => ({
-                  id,
-                  nom: (supplierResponse.data as any).nom
-                }))
-              )
-            )
-          ),
-          products: forkJoin(
-            productIds.map(id =>
-              this.productService.getProduitById(id.toString()).pipe(
-                map(productResponse => ({
-                  id,
-                  nom: (productResponse.data as any).nom
-                }))
-              )
-            )
-          ),
-          achats: of(achats)
-        });
-      }),
-      map(({ suppliers, products, achats }) => {
-        const supplierMap = new Map<number, string>();
-        suppliers.forEach(s => supplierMap.set(s.id, s.nom));
+getAchats(): void {
+  const filters = this.filterForm.value;
 
-        const productMap = new Map<number, string>();
-        products.forEach(p => productMap.set(p.id, p.nom));
+  this.achatsService.getPurchasesByFilter(filters).pipe(
+    map((response: PurchasesPaged) => {
+      const achats = response.data;
 
-        return achats.map(achat => ({
-          ...achat,
-          supplier_name: supplierMap.get(achat.supplier_id),
-          product_name: productMap.get(achat.product_id)
-        }));
-      })
-    ).subscribe(
-      (achatsEnrichis: Purchase[]) => {
-        this.dataSource.data = achatsEnrichis;
-      },
-      error => {
-        console.error('Erreur lors de la récupération des achats', error);
-      }
-    );
-  }
+      return achats.map(achat => ({
+        ...achat,
+        supplier_name: achat.fournisseur?.nom ?? 'Fournisseur inconnu',
+        product_name: achat.product?.nom ?? 'Produit inconnu'
+      }));
+    })
+  ).subscribe(
+    (achatsEnrichis: Purchase[]) => {
+      this.dataSource.data = achatsEnrichis;
+    },
+    error => {
+      console.error('Erreur lors de la récupération des achats', error);
+    }
+  );
+}
 
 
   goToAddAchat(): void {
