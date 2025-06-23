@@ -66,15 +66,14 @@
                   placeholder="Rechercher une catégorie…" />
 
                 <mat-autocomplete
-                  #auto="matAutocomplete"
-                  [displayWith]="displayCategorie">
+                    #auto="matAutocomplete"
+                    [displayWith]="displayCategorieFn">
 
-                  <mat-option
+                    <mat-option
                     *ngFor="let cat of filteredCategories$ | async"
                     [value]="cat.id">
                     {{ cat.nom }}
-                  </mat-option>
-
+                    </mat-option>
                 </mat-autocomplete>
 
                 <mat-error *ngIf="myForm.get('categorie_id')?.hasError('required')">

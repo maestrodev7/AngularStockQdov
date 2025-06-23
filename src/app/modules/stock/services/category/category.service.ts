@@ -9,9 +9,9 @@ import { CategoriesPaged } from '../../interfaces/category/categories-paged';
   providedIn: 'root'
 })
 export class CategoryService {
-  private baseUrl: string = environment.apiUrl; 
+  private baseUrl: string = environment.apiUrl;
   private url = `${this.baseUrl}/api/categories`;
-  
+
   constructor(private http: HttpClient) { }
 
   addCategory(category: Category): Observable<Category> {

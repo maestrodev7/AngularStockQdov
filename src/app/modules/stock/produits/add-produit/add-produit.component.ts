@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProduitService } from '../../services/produits/produit.service';
@@ -15,8 +15,9 @@ import { CommonModule } from '@angular/common';
 import { magasinOrBoutiqueValidator } from '../../common/custom-valodators/magasin-boutique.validator';
 import { CategoryService } from '../../services/category/category.service';
 import { Category } from '../../interfaces/category/category';
-import { forkJoin, map, Observable, startWith, take } from 'rxjs';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { forkJoin, map, Observable, of, startWith, take } from 'rxjs';
+import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { CategoriesPaged } from '../../interfaces/category/categories-paged';
 
 @Component({
   selector: 'app-add-produit',
@@ -34,6 +35,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
   styleUrls: ['./add-produit.component.scss'],
 })
 export class AddProduitComponent implements OnInit {
+@ViewChild(MatAutocompleteTrigger) autocomplete!: MatAutocompleteTrigger;
+
   myForm: FormGroup;
   magasins: Magazin[] = [];
   boutiques: Boutique[] = [];
@@ -87,36 +90,83 @@ export class AddProduitComponent implements OnInit {
     );
   }
 
-  // pour l'affichage dans le champ texte lorsque l'ID est déjà défini
-  displayCategorie(id: number): string {
-    return this._getNomById(id) || '';
-  }
+onCategorySelected(cat: Category): void {
+  this.myForm.get('categorie_id')?.setValue(cat.id);
+  this.autocomplete.closePanel();
+}
+
+displayCategorieFn = (categorie: number | string): string => {
+  if (!categorie) return '';
+  if (typeof categorie === 'string') return categorie;
+  if (!this.categories || this.categories.length === 0) return '';
+  const found = this.categories.find(c => c.id === categorie);
+  return found ? found.nom : '';
+};
 
   private _getNomById(id: number): string {
     const found = this.categories.find(c => c.id === id);
     return found ? found.nom : '';
   }
+
   onSubmit(): void {
     if (this.myForm.invalid) {
         this.myForm.markAllAsTouched();
         return;
-      }
+    }
 
-      const payload: Produit = {
-        ...this.myForm.value,
-        from_magazin: this.myForm.value.locationType === 'magasin',
-      };
+    const rawCategorie = this.myForm.get('categorie_id')!.value;
 
-      const action$ = payload.from_magazin
-        ? this.produitService.addProduitToMagasin(payload)
-        : this.produitService.addProduitToBoutique(payload);
+    const processCategorie$: Observable<any> =
+        typeof rawCategorie === 'number'
+        ? new Observable(observer => {
+            const existing = this.categories.find(c => c.id === rawCategorie);
+            if (existing) {
+                of(existing);
+            } else {
+                observer.error('Catégorie introuvable');
+            }
+            })
+        : this.createCategoryIfNotExist(rawCategorie);
 
-      action$.pipe(take(1)).subscribe(() => {
+        processCategorie$.pipe(take(1)).subscribe({
+            next: (response) => {
+                const category = response.data;
+                const payload: Produit = {
+                    ...this.myForm.value,
+                    categorie_id: category.id,
+                    from_magazin: this.myForm.value.locationType === 'magasin',
+                };
+
+                const action$ = payload.from_magazin
+                    ? this.produitService.addProduitToMagasin(payload)
+                    : this.produitService.addProduitToBoutique(payload);
+
+                action$.pipe(take(1)).subscribe(() => {
+                    this.router.navigate(['/produits']);
+                });
+            },
+            error: (err) => {
+                console.error('Erreur lors de la gestion de la catégorie:', err);
+            }
+        });
+    }
+
+
+    backToProduitsList(): void {
         this.router.navigate(['/produits']);
-      });
-  }
+    }
 
-  backToProduitsList(): void {
-    this.router.navigate(['/produits']);
-  }
+    private createCategoryIfNotExist(nom: string): Observable<any> {
+        const existing = this.categories.find(c => c.nom.toLowerCase() === nom.toLowerCase());
+        if (existing) {
+            return of({
+                status: 'success',
+                message: 'Catégorie existante',
+                data: existing
+            });
+        }
+
+        return this.categorySvc.addCategory({ nom });
+    }
+
 }
