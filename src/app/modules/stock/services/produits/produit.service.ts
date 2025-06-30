@@ -28,17 +28,23 @@ export class ProduitService {
     return this.http.put<Produit>(`${this.url}/${id}`, produit);
   }
 
-  getProduitsByFilter(filters: any = {}): Observable<ProduitsPaged> {
-    let params = new HttpParams();
-    Object.keys(filters).forEach(key => {
-      if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
-        params = params.set(key, filters[key]);
-      }
-    });
-    console.log(params);
+getProduitsByFilter(filters?: any): Observable<ProduitsPaged> {
+  const safeFilters = filters && typeof filters === 'object' ? filters : {};
+  let params = new HttpParams();
 
-    return this.http.get<ProduitsPaged>(this.url, { params });
-  }
+  Object.keys(safeFilters).forEach(key => {
+    if (
+      safeFilters[key] !== null &&
+      safeFilters[key] !== undefined &&
+      safeFilters[key] !== ''
+    ) {
+      params = params.set(key, safeFilters[key]);
+    }
+  });
+
+  return this.http.get<ProduitsPaged>(this.url, { params });
+}
+
 
   getProduitById(id: string): Observable<ProduitsPaged> {
     return this.http.get<ProduitsPaged>(`${this.url}/${id}`);
