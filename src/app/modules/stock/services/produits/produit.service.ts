@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 import { Produit } from '../../interfaces/produits/produit';
 import { ProduitsPaged } from '../../interfaces/produits/produits-paged';
+import { ProduitReponse } from '../../interfaces/produits/produit-reponse';
 
 @Injectable({
   providedIn: 'root'
@@ -46,8 +47,8 @@ getProduitsByFilter(filters?: any): Observable<ProduitsPaged> {
 }
 
 
-  getProduitById(id: string): Observable<ProduitsPaged> {
-    return this.http.get<ProduitsPaged>(`${this.url}/${id}`);
+  getProduitById(id: string): Observable<ProduitReponse> {
+    return this.http.get<ProduitReponse>(`${this.url}/${id}`);
   }
 
   deleteProduit(produitId: number): Observable<void> {

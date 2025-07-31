@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProduitService } from '../../services/produits/produit.service';
 import { MagazinService } from '../../services/magazins/magazin.service';
@@ -63,6 +63,7 @@ export class AddProduitComponent implements OnInit {
       quantite: ['', [Validators.required, Validators.min(0)]],
       magasin_id: [''],
       boutique_id: [''],
+      tailles: this.fb.array([]),
     },
     { validators: magasinOrBoutiqueValidator() });
   }
@@ -103,6 +104,23 @@ displayCategorieFn = (categorie: number | string): string => {
   return found ? found.nom : '';
 };
 
+get tailles(): FormArray {
+  return this.myForm.get('tailles') as FormArray;
+}
+
+addTaille(): void {
+  this.tailles.push(this.fb.group({
+    taille: ['', Validators.required],
+    prix_achat: ['', [Validators.required, Validators.min(0)]],
+    prix_vente: ['', [Validators.required, Validators.min(0)]],
+    quantite: ['', [Validators.required, Validators.min(0)]]
+  }));
+}
+
+removeTaille(index: number): void {
+  this.tailles.removeAt(index);
+}
+
   private _getNomById(id: number): string {
     const found = this.categories.find(c => c.id === id);
     return found ? found.nom : '';
@@ -118,15 +136,12 @@ displayCategorieFn = (categorie: number | string): string => {
 
     const processCategorie$: Observable<any> =
         typeof rawCategorie === 'number'
-        ? new Observable(observer => {
-            const existing = this.categories.find(c => c.id === rawCategorie);
-            if (existing) {
-                of(existing);
-            } else {
-                observer.error('Catégorie introuvable');
-            }
+            ? of({
+                status: 'success',
+                message: 'Catégorie existante',
+                data: this.categories.find(c => c.id === rawCategorie)
             })
-        : this.createCategoryIfNotExist(rawCategorie);
+            : this.createCategoryIfNotExist(rawCategorie);
 
         processCategorie$.pipe(take(1)).subscribe({
             next: (response) => {

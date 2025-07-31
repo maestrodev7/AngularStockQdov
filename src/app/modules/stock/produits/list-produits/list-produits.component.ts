@@ -147,6 +147,10 @@ export class ListProduitsComponent implements OnInit {
     this.router.navigate(['/produits/update-produit', produitId]);
   }
 
+  detailProduitById(produitId: number): void {
+    this.router.navigate(['/produits/detail-produit', produitId]);
+  }
+
   openDeleteDialog(produitId: number): void {
     const dialogRef = this.dialog.open(DeleteProduitDialogComponent, {
       width: '300px',

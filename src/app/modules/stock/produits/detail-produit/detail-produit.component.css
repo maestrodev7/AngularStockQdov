@@ -1,0 +1,62 @@
+mat-card {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+mat-card-content p {
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #333;
+}
+
+h4 {
+  margin-top: 24px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #34495e;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background-color: #f9f9f9;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+th {
+  background-color: #e3e3e3;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+td {
+  background-color: #fff;
+}
+
+@media (max-width: 600px) {
+  mat-card {
+    margin: 10px;
+    padding: 12px;
+  }
+
+  table, th, td {
+    font-size: 0.85rem;
+  }
+}

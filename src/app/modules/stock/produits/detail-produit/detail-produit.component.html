@@ -1,0 +1,30 @@
+<mat-card *ngIf="produit">
+  <mat-card-title>Détails du produit</mat-card-title>
+  <mat-card-content>
+    <p><strong>Nom :</strong> {{ produit.nom }}</p>
+    <p><strong>Description :</strong> {{ produit.description }}</p>
+    <p><strong>Catégorie :</strong> {{ produit.categorie?.nom }}</p>
+    <p><strong>Prix d'achat :</strong> {{ produit.prix_achat }}</p>
+    <p><strong>Prix de vente :</strong> {{ produit.prix_vente }}</p>
+    <p><strong>Quantité totale :</strong> {{ produit.quantite }}</p>
+
+    <h4>Tailles :</h4>
+    <table *ngIf="produit.tailles?.length > 0; else noSizes">
+      <tr>
+        <th>Taille</th>
+        <th>Prix d'achat</th>
+        <th>Prix de vente</th>
+        <th>Quantité</th>
+      </tr>
+      <tr *ngFor="let taille of produit.tailles">
+        <td>{{ taille.taille }}</td>
+        <td>{{ taille.prix_achat }}</td>
+        <td>{{ taille.prix_vente }}</td>
+        <td>{{ taille.quantite }}</td>
+      </tr>
+    </table>
+    <ng-template #noSizes>
+      <p>Aucune taille enregistrée pour ce produit.</p>
+    </ng-template>
+  </mat-card-content>
+</mat-card>
